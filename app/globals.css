@@ -1,0 +1,238 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* Updated to light gray background and matching borders */
+  --background: #f5f5f7;
+  --foreground: #1d1d1f;
+  --card: rgba(255, 255, 255, 0.75);
+  --card-foreground: #1d1d1f;
+  --popover: rgba(255, 255, 255, 0.85);
+  --popover-foreground: #1d1d1f;
+
+  /* NH Bank brand colors */
+  --primary: #0066cc;
+  --primary-foreground: #ffffff;
+  --secondary: #9acd32;
+  --secondary-foreground: #1d1d1f;
+
+  --muted: #f5f5f7;
+  --muted-foreground: #86868b;
+  --accent: #f5f5f7;
+  --accent-foreground: #1d1d1f;
+
+  /* Status colors */
+  --success: #34c759;
+  --warning: #ff9500;
+  --destructive: #ff3b30;
+  --destructive-foreground: #ffffff;
+
+  /* Borders match card background for seamless look */
+  --border: rgba(255, 255, 255, 0.75);
+  --input: #e5e5ea;
+  --ring: #0066cc;
+
+  /* Chart colors */
+  --chart-1: #0066cc;
+  --chart-2: #34c759;
+  --chart-3: #ff9500;
+  --chart-4: #ff3b30;
+  --chart-5: #5ac8fa;
+
+  --radius: 1rem;
+
+  --sidebar: rgba(255, 255, 255, 0.75);
+  --sidebar-foreground: #1d1d1f;
+  --sidebar-primary: #0066cc;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f5f5f7;
+  --sidebar-accent-foreground: #1d1d1f;
+  --sidebar-border: rgba(255, 255, 255, 0.75);
+  --sidebar-ring: #0066cc;
+}
+
+.dark {
+  --background: #000000;
+  --foreground: #f5f5f7;
+  --card: rgba(28, 28, 30, 0.75);
+  --card-foreground: #f5f5f7;
+  --popover: rgba(28, 28, 30, 0.85);
+  --popover-foreground: #f5f5f7;
+  --primary: #0a84ff;
+  --primary-foreground: #ffffff;
+  --secondary: #32d74b;
+  --secondary-foreground: #000000;
+  --muted: #1c1c1e;
+  --muted-foreground: #98989d;
+  --accent: #1c1c1e;
+  --accent-foreground: #f5f5f7;
+  --success: #32d74b;
+  --warning: #ff9f0a;
+  --destructive: #ff453a;
+  --destructive-foreground: #ffffff;
+  --border: rgba(28, 28, 30, 0.75);
+  --input: #38383a;
+  --ring: #0a84ff;
+  --chart-1: #0a84ff;
+  --chart-2: #32d74b;
+  --chart-3: #ff9f0a;
+  --chart-4: #ff453a;
+  --chart-5: #5ac8fa;
+  --sidebar: rgba(28, 28, 30, 0.75);
+  --sidebar-foreground: #f5f5f7;
+  --sidebar-primary: #0a84ff;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #1c1c1e;
+  --sidebar-accent-foreground: #f5f5f7;
+  --sidebar-border: rgba(28, 28, 30, 0.75);
+  --sidebar-ring: #0a84ff;
+}
+
+@theme inline {
+  --font-pretendard: "Pretendard Variable", -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+}
+
+@layer base {
+  * {
+    /* Reduced letter spacing globally */
+    letter-spacing: -0.03em;
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    background: #f5f5f7;
+  }
+
+  .dark body {
+    background: #000000;
+  }
+
+  /* Hide scrollbars globally */
+  * {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+  }
+
+  *::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
+
+  @keyframes slide-up {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes scale-in {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  .animate-slide-up {
+    animation: slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.3s ease-out;
+  }
+
+  .animate-scale-in {
+    animation: scale-in 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* Increased opacity for better readability */
+  .glass {
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.92);
+  }
+
+  .dark .glass {
+    background: rgba(28, 28, 30, 0.92);
+    border: 1px solid rgba(28, 28, 30, 0.92);
+  }
+
+  .shadow-soft {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 2px 6px rgba(0, 0, 0, 0.04);
+  }
+
+  .shadow-soft-lg {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06), 0 4px 16px rgba(0, 0, 0, 0.06);
+  }
+
+  /* Enhanced card glassmorphism with matching borders */
+  .card-glass {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.85);
+  }
+
+  .dark .card-glass {
+    background: rgba(28, 28, 30, 0.85);
+    border: 1px solid rgba(28, 28, 30, 0.85);
+  }
+}
