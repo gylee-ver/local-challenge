@@ -4,7 +4,7 @@ import { useState } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { ArrowLeft, Wallet, TrendingUp, Clock, CheckCircle2, AlertCircle, ChevronRight, Lock } from "lucide-react"
+import { ArrowLeft, Wallet, TrendingUp, Clock, CheckCircle2, AlertCircle, ChevronRight, Lock, Heart } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useWallet } from "@/lib/wallet-context"
@@ -86,14 +86,14 @@ export default function MySupportPage() {
               <Card key={deposit.id} className="p-5">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center text-2xl">
+                  <div className="w-12 h-12 bg-gradient-to-br from-emerald-400 to-emerald-500 rounded-xl flex items-center justify-center text-2xl">
                     {deposit.shopEmoji}
                   </div>
                   <div>
                     <div className="flex items-center gap-2 mb-1">
                       <span className="font-bold">{deposit.shopName}</span>
-                      <Badge className="bg-gradient-to-r from-yellow-400 to-yellow-500 text-yellow-900 border-0 text-xs">
-                        1위
+                      <Badge className="bg-success/10 text-success border-success/20 text-xs">
+                        💚 응원중
                       </Badge>
                     </div>
                     <div className="text-xs text-muted-foreground">{deposit.leagueName}</div>
@@ -167,16 +167,17 @@ export default function MySupportPage() {
               </Card>
             )}
 
-            {/* Payment Encouragement */}
-            <Card className="p-4 bg-gradient-to-br from-chart-2/10 to-chart-2/5 border-chart-2/20">
+            {/* Support Tip */}
+            <Card className="p-4 bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
               <div className="flex items-start gap-3">
-                <div className="w-10 h-10 bg-chart-2/20 rounded-full flex items-center justify-center flex-shrink-0">
-                  <TrendingUp className="w-5 h-5 text-chart-2" />
+                <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0">
+                  <Heart className="w-5 h-5 text-primary" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-bold text-sm mb-1">순위 상승 팁!</h3>
+                  <h3 className="font-bold text-sm mb-1">응원을 더욱 의미있게!</h3>
                   <p className="text-xs text-muted-foreground leading-relaxed mb-3">
-                    카페 로컬빈즈에서 NH pay로 결제하면 순위 점수가 올라갑니다. 결제액의 70%가 순위에 반영돼요!
+                    응원한 가게에서 NH pay로 결제하면 가게가 더 큰 성장을 이룰 수 있어요. 
+                    여러분의 작은 관심이 지역 경제를 살립니다!
                   </p>
                   <Button size="sm" className="w-full" onClick={() => alert("지도 기능은 준비 중입니다.")}>
                     가게 위치 보기
@@ -199,11 +200,6 @@ export default function MySupportPage() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
                       <span className="font-bold text-sm truncate">{item.shopName}</span>
-                      {item.rank && (
-                        <Badge variant="outline" className="text-xs">
-                          {item.rank}위
-                        </Badge>
-                      )}
                     </div>
                     <div className="text-xs text-muted-foreground mb-3">{item.leagueName}</div>
 

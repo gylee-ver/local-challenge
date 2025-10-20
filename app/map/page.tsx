@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
-import { MapPin, Search, Store, Heart, Award, ChevronRight, X, Locate } from "lucide-react"
+import { MapPin, Search, Store, Heart, Award, ChevronRight, X, Locate, Home } from "lucide-react"
 import Link from "next/link"
 
 const formatKoreanCurrency = (amount: number): string => {
@@ -260,8 +260,8 @@ export default function MapPage() {
       <nav className="fixed bottom-0 left-0 right-0 glass shadow-soft-lg rounded-t-[32px]">
         <div className="flex items-center justify-around py-3 px-2">
           {[
-            { icon: Store, label: "홈", active: false, href: "/" },
-            { icon: Award, label: "랭킹", active: false, href: "/league" },
+            { icon: Home, label: "홈", active: false, href: "/" },
+            { icon: Store, label: "가게들", active: false, href: "/league" },
             { icon: MapPin, label: "지도", active: true, href: "/map" },
             { icon: Heart, label: "내 응원", active: false, href: "/my-support" },
           ].map((item, i) => (

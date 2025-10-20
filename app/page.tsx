@@ -4,7 +4,7 @@ import { useState } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Search, Bell, MapPin, Users, ChevronRight, Heart, Store, Award, DollarSign } from "lucide-react"
+import { Search, Bell, MapPin, Users, ChevronRight, Heart, Store, Award, DollarSign, Home } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { DepositDialog } from "@/components/deposit-dialog"
@@ -112,7 +112,7 @@ export default function HomePage() {
 
         <Card className="p-4 card-glass shadow-soft">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="font-bold text-base">내가 응원하는 가게</h3>
+            <h3 className="font-bold text-lg">내가 응원하는 가게</h3>
             <Link href="/my-support" className="text-sm text-primary font-semibold hover:underline">
               전체보기
             </Link>
@@ -164,36 +164,30 @@ export default function HomePage() {
         </Card>
 
         <div className="relative">
-          <div className="flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide">
-            <Card className="p-5 card-glass shadow-soft flex-shrink-0 w-[180px] snap-start">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-primary/20 to-primary/10 rounded-xl flex items-center justify-center">
-                  <Users className="w-6 h-6 text-primary" />
-                </div>
-                <div className="text-sm text-muted-foreground font-medium">참여자</div>
+          <div className="flex gap-2.5 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide">
+            <Card className="p-3.5 card-glass shadow-soft flex-shrink-0 w-[150px] snap-start">
+              <div className="flex items-center gap-2 mb-2">
+                <Users className="w-4 h-4 text-primary" />
+                <div className="text-xs text-muted-foreground font-medium">참여자</div>
               </div>
-              <div className="text-3xl font-bold tabular-nums mb-1">1,247명</div>
-              <div className="text-xs text-success font-semibold">+8.3% 증가</div>
+              <div className="text-2xl font-bold tabular-nums mb-0.5">1,247명</div>
+              <div className="text-xs text-success font-medium">+8.3%</div>
             </Card>
-            <Card className="p-5 card-glass shadow-soft flex-shrink-0 w-[180px] snap-start">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-secondary/20 to-secondary/10 rounded-xl flex items-center justify-center">
-                  <DollarSign className="w-6 h-6 text-secondary" />
-                </div>
-                <div className="text-sm text-muted-foreground font-medium">총 응원금</div>
+            <Card className="p-3.5 card-glass shadow-soft flex-shrink-0 w-[150px] snap-start">
+              <div className="flex items-center gap-2 mb-2">
+                <DollarSign className="w-4 h-4 text-secondary" />
+                <div className="text-xs text-muted-foreground font-medium">총 응원금</div>
               </div>
-              <div className="text-3xl font-bold tabular-nums mb-1">{formatKoreanCurrency(2400000)}</div>
-              <div className="text-xs text-success font-semibold">+18.5% 증가</div>
+              <div className="text-2xl font-bold tabular-nums mb-0.5">{formatKoreanCurrency(2400000)}</div>
+              <div className="text-xs text-success font-medium">+18.5%</div>
             </Card>
-            <Card className="p-5 card-glass shadow-soft flex-shrink-0 w-[180px] snap-start">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-chart-3/20 to-chart-3/10 rounded-xl flex items-center justify-center">
-                  <Award className="w-6 h-6 text-chart-3" />
-                </div>
-                <div className="text-sm text-muted-foreground font-medium">참여 가게</div>
+            <Card className="p-3.5 card-glass shadow-soft flex-shrink-0 w-[150px] snap-start">
+              <div className="flex items-center gap-2 mb-2">
+                <Award className="w-4 h-4 text-chart-3" />
+                <div className="text-xs text-muted-foreground font-medium">참여 가게</div>
               </div>
-              <div className="text-3xl font-bold tabular-nums mb-1">10개</div>
-              <div className="text-xs text-success font-semibold">+2개 추가</div>
+              <div className="text-2xl font-bold tabular-nums mb-0.5">10개</div>
+              <div className="text-xs text-success font-medium">+2개</div>
             </Card>
           </div>
           <div className="absolute right-0 top-0 bottom-2 w-16 bg-gradient-to-l from-background via-background/80 to-transparent pointer-events-none" />
@@ -201,9 +195,9 @@ export default function HomePage() {
 
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-bold text-lg">이번 달 챌린지 가게</h3>
+            <h3 className="font-bold text-lg">이달의 추천 가게</h3>
             <Link href="/league" className="text-sm text-primary font-semibold flex items-center gap-1">
-              랭킹 보기
+              전체 보기
               <ChevronRight className="w-4 h-4" />
             </Link>
           </div>
@@ -212,55 +206,59 @@ export default function HomePage() {
             <div className="flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide">
               {[
                 {
-                  rank: 1,
+                  id: 1,
                   name: "카페 온더코너",
                   category: "카페·디저트",
                   supporters: 156,
                   amount: 842000,
-                  change: "+12.3%",
+                  theme: { label: "지속가능", emoji: "💚", color: "success" },
                   image: "☕",
+                  bgColor: "from-emerald-400 to-emerald-500",
                 },
                 {
-                  rank: 2,
+                  id: 2,
                   name: "라멘야쿠모",
                   category: "일식·라멘",
                   supporters: 142,
                   amount: 756000,
-                  change: "+8.7%",
+                  theme: { label: "스태프 픽", emoji: "🌟", color: "primary" },
                   image: "🍜",
+                  bgColor: "from-blue-400 to-blue-500",
                 },
                 {
-                  rank: 3,
+                  id: 3,
                   name: "한신포차 강남점",
                   category: "한식·포차",
                   supporters: 98,
                   amount: 523000,
-                  change: "+15.2%",
+                  theme: { label: "응원 급증", emoji: "🔥", color: "warning" },
                   image: "🍻",
+                  bgColor: "from-orange-400 to-orange-500",
                 },
               ].map((shop) => (
-                <Link key={shop.rank} href={`/shop/${shop.rank}`} className="flex-shrink-0 snap-start">
-                  <Card className="w-[170px] card-glass hover:shadow-soft-lg transition-all active:scale-[0.98] overflow-hidden">
-                    <div
-                      className={`h-[130px] flex items-center justify-center text-6xl ${
-                        shop.rank === 1
-                          ? "bg-gradient-to-br from-yellow-400 to-yellow-500"
-                          : shop.rank === 2
-                            ? "bg-gradient-to-br from-gray-300 to-gray-400"
-                            : "bg-gradient-to-br from-orange-400 to-orange-500"
-                      }`}
-                    >
+                <Link key={shop.id} href={`/shop/${shop.id}`} className="flex-shrink-0 snap-start">
+                  <Card className="w-[170px] card-glass hover:shadow-soft-lg transition-all active:scale-[0.98] overflow-hidden p-0">
+                    <div className={`h-[140px] flex items-center justify-center text-6xl bg-gradient-to-br ${shop.bgColor}`}>
                       {shop.image}
                     </div>
-                    <div className="p-4">
-                      <div className="flex items-center gap-1.5 mb-1.5">
-                        <span className="text-xs font-bold text-muted-foreground">{shop.rank}위</span>
+                    <div className="p-3.5">
+                      <div className="flex items-center gap-1.5 mb-2">
+                        <Badge
+                          className={`text-xs font-semibold px-2 py-0.5 border-0 ${
+                            shop.theme.color === "success"
+                              ? "bg-success/10 text-success"
+                              : shop.theme.color === "primary"
+                                ? "bg-primary/10 text-primary"
+                                : "bg-warning/10 text-warning"
+                          }`}
+                        >
+                          {shop.theme.emoji} {shop.theme.label}
+                        </Badge>
                       </div>
-                      <div className="text-sm font-bold mb-1.5 break-words leading-tight">{shop.name}</div>
-                      <div className="text-xs text-muted-foreground mb-3">{shop.category}</div>
-                      <div className="flex items-center justify-between text-xs gap-2">
-                        <span className="font-bold tabular-nums">{formatKoreanCurrency(shop.amount)}</span>
-                        <span className="text-success font-semibold">{shop.change}</span>
+                      <div className="text-sm font-bold mb-1 break-words leading-tight">{shop.name}</div>
+                      <div className="text-xs text-muted-foreground mb-2">{shop.category}</div>
+                      <div className="text-xs">
+                        <span className="font-bold text-primary tabular-nums">{formatKoreanCurrency(shop.amount)}</span>
                       </div>
                     </div>
                   </Card>
@@ -314,8 +312,8 @@ export default function HomePage() {
       <nav className="fixed bottom-0 left-0 right-0 glass shadow-soft-lg rounded-t-[32px]">
         <div className="flex items-center justify-around py-3 px-2">
           {[
-            { icon: Store, label: "홈", active: true, href: "/" },
-            { icon: Award, label: "랭킹", active: false, href: "/league" },
+            { icon: Home, label: "홈", active: true, href: "/" },
+            { icon: Store, label: "가게들", active: false, href: "/league" },
             { icon: MapPin, label: "지도", active: false, href: "/map" },
             { icon: Heart, label: "내 응원", active: false, href: "/my-support" },
           ].map((item, i) => (

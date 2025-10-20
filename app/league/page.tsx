@@ -3,17 +3,18 @@
 import { useState } from "react"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import {
   ArrowLeft,
-  TrendingUp,
-  TrendingDown,
-  Minus,
   Heart,
   ChevronRight,
   RefreshCw,
   DollarSign,
   UsersIcon,
   Archive,
+  MapPin,
+  Sparkles,
+  Shuffle,
 } from "lucide-react"
 import Link from "next/link"
 import { useLeague } from "@/lib/league-context"
@@ -41,127 +42,138 @@ const formatKoreanCurrency = (amount: number): string => {
 export default function LeagueRankingPage() {
   const { currentLeague } = useLeague()
   const [isRefreshing, setIsRefreshing] = useState(false)
+  const [sortBy, setSortBy] = useState<"distance" | "random">("distance")
 
   const shops = [
     {
-      rank: 1,
-      prevRank: 1,
+      id: 1,
       name: "카페 온더코너",
       category: "카페·디저트",
       payment: 842000,
       supporters: 156,
-      score: 87.5,
-      change: 0,
       emoji: "☕",
       isMySupport: true,
+      theme: { label: "지속가능", emoji: "💚", color: "success" },
+      story: "논현동에서 10년째 로컬 원두로 따뜻한 커피를 전합니다",
+      distance: 250,
+      status: "popular", // popular | growing | needSupport
     },
     {
-      rank: 2,
-      prevRank: 3,
+      id: 2,
       name: "라멘야쿠모",
       category: "일식·라멘",
       payment: 756000,
       supporters: 142,
-      score: 82.3,
-      change: 1,
       emoji: "🍜",
       isMySupport: false,
+      theme: { label: "스태프 픽", emoji: "🌟", color: "primary" },
+      story: "정통 일본식 라멘과 지역 농산물이 만나는 곳",
+      distance: 380,
+      status: "popular",
     },
     {
-      rank: 3,
-      prevRank: 2,
+      id: 3,
       name: "한신포차 강남점",
       category: "한식·포차",
       payment: 523000,
       supporters: 98,
-      score: 71.8,
-      change: -1,
       emoji: "🍻",
       isMySupport: false,
+      theme: { label: "응원 급증", emoji: "🔥", color: "warning" },
+      story: "퇴근 후 동네 사람들이 모이는 따뜻한 공간",
+      distance: 520,
+      status: "growing",
     },
     {
-      rank: 4,
-      prevRank: 4,
+      id: 4,
       name: "더그린테이블",
       category: "샐러드·브런치",
       payment: 487000,
       supporters: 89,
-      score: 68.2,
-      change: 0,
       emoji: "🥗",
       isMySupport: false,
+      theme: { label: "건강한 식탁", emoji: "🥗", color: "success" },
+      story: "유기농 채소로 만드는 건강한 한 끼",
+      distance: 680,
+      status: "popular",
     },
     {
-      rank: 5,
-      prevRank: 6,
+      id: 5,
       name: "미스터피자 삼성점",
       category: "양식·피자",
       payment: 412000,
       supporters: 76,
-      score: 62.5,
-      change: 1,
       emoji: "🍕",
       isMySupport: false,
+      theme: { label: "가족 친화", emoji: "👨‍👩‍👧", color: "primary" },
+      story: "가족 단위 고객들의 단골 피자집",
+      distance: 750,
+      status: "popular",
     },
     {
-      rank: 6,
-      prevRank: 5,
+      id: 6,
       name: "봉추찜닭 강남점",
       category: "한식·찜닭",
       payment: 398000,
       supporters: 71,
-      score: 59.8,
-      change: -1,
       emoji: "🍗",
       isMySupport: false,
+      theme: { label: "응원 필요", emoji: "💪", color: "chart-2" },
+      story: "푸짐한 한 끼로 지역 주민을 행복하게",
+      distance: 820,
+      status: "needSupport",
     },
     {
-      rank: 7,
-      prevRank: 7,
+      id: 7,
       name: "카페드림",
       category: "카페·디저트",
       payment: 356000,
       supporters: 64,
-      score: 55.2,
-      change: 0,
       emoji: "☕",
       isMySupport: false,
+      theme: { label: "신규 오픈", emoji: "✨", color: "primary" },
+      story: "신사동에 새로 오픈한 감성 카페",
+      distance: 950,
+      status: "growing",
     },
     {
-      rank: 8,
-      prevRank: 9,
+      id: 8,
       name: "본죽 역삼점",
       category: "한식·죽",
       payment: 312000,
       supporters: 58,
-      score: 51.7,
-      change: 1,
       emoji: "🥣",
       isMySupport: false,
+      theme: { label: "건강 밥상", emoji: "🌾", color: "success" },
+      story: "바쁜 직장인들의 건강한 한 끼",
+      distance: 450,
+      status: "needSupport",
     },
     {
-      rank: 9,
-      prevRank: 8,
+      id: 9,
       name: "피자스쿨 대치점",
       category: "양식·피자",
       payment: 287000,
       supporters: 52,
-      score: 48.3,
-      change: -1,
       emoji: "🍕",
       isMySupport: false,
+      theme: { label: "응원 필요", emoji: "💪", color: "chart-2" },
+      story: "학생들과 함께 성장하는 동네 피자집",
+      distance: 1100,
+      status: "needSupport",
     },
     {
-      rank: 10,
-      prevRank: 10,
+      id: 10,
       name: "맘스터치 강남역점",
       category: "패스트푸드·버거",
       payment: 245000,
       supporters: 47,
-      score: 44.9,
-      change: 0,
       emoji: "🍔",
       isMySupport: false,
+      theme: { label: "첫 응원", emoji: "❤️", color: "destructive" },
+      story: "따뜻한 첫 응원이 필요합니다",
+      distance: 600,
+      status: "needSupport",
     },
   ]
 
@@ -172,18 +184,24 @@ export default function LeagueRankingPage() {
     }, 1000)
   }
 
+  const sortedShops = [...shops].sort((a, b) => {
+    if (sortBy === "distance") return a.distance - b.distance
+    if (sortBy === "random") return Math.random() - 0.5
+    return 0 // story는 원래 순서 유지
+  })
+
   return (
-    <div className="min-h-screen bg-background pb-6">
+    <div className="min-h-screen bg-muted/30 pb-6">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-card border-b border-border glass shadow-soft">
+      <header className="sticky top-0 z-50 bg-card border-b border-border shadow-sm">
         <div className="flex items-center justify-between px-4 py-3">
           <div className="flex items-center gap-3">
             <Link href="/" className="p-2 -ml-2 hover:bg-accent rounded-lg transition-colors">
               <ArrowLeft className="w-5 h-5" />
             </Link>
             <div>
-              <h1 className="font-bold">강남구 10월 리그</h1>
-              <p className="text-xs text-muted-foreground">실시간 랭킹</p>
+              <h1 className="font-bold">이달의 가게들</h1>
+              <p className="text-xs text-muted-foreground">{currentLeague.region}</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -205,156 +223,151 @@ export default function LeagueRankingPage() {
       </header>
 
       <main className="px-4 pt-4 space-y-4">
-        {/* Ranking Calculation Info */}
-        <Card className="p-4 bg-primary/5 border-primary/20 card-glass shadow-soft">
+        {/* Hooking Message */}
+        <div className="bg-gradient-to-br from-primary/8 via-success/5 to-transparent rounded-2xl p-4 border border-primary/20">
           <div className="flex items-start gap-3">
-            <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0">
-              <TrendingUp className="w-5 h-5 text-primary" />
-            </div>
+            <div className="text-2xl">💚</div>
             <div className="flex-1">
-              <h3 className="font-bold text-sm mb-1">우승 기준</h3>
+              <p className="text-sm font-semibold text-foreground mb-1 leading-snug">
+                우리 동네 가게를 발견하고 응원해보세요
+              </p>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                NH pay 오프라인 결제액 70% + 응원 참여자 수 30%를 합산하여 순위가 결정됩니다. 실시간 업데이트는 10분마다
-                반영됩니다.
+                당신의 작은 관심이 청년 창업가에게는 큰 힘이 됩니다
               </p>
             </div>
           </div>
-        </Card>
+        </div>
 
         {/* Payment and Supporters Summary Cards */}
-        <div className="grid grid-cols-2 gap-3">
-          <Card className="p-4 card-glass shadow-soft">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 bg-gradient-to-br from-primary/20 to-primary/10 rounded-xl flex items-center justify-center">
-                <DollarSign className="w-5 h-5 text-primary" />
-              </div>
-              <div className="text-xs text-muted-foreground font-medium">총 결제액</div>
+        <div className="grid grid-cols-2 gap-2">
+          <div className="p-3 bg-card rounded-xl border border-border shadow-sm">
+            <div className="flex items-center gap-1.5 mb-1">
+              <DollarSign className="w-4 h-4 text-primary" />
+              <div className="text-xs text-muted-foreground">총 결제액</div>
             </div>
-            <div className="text-2xl font-bold tabular-nums">{formatKoreanCurrency(3020000)}</div>
-            <div className="text-xs text-success font-semibold mt-1">+18.5% 증가</div>
-          </Card>
-          <Card className="p-4 card-glass shadow-soft">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 bg-gradient-to-br from-secondary/20 to-secondary/10 rounded-xl flex items-center justify-center">
-                <UsersIcon className="w-5 h-5 text-secondary" />
-              </div>
-              <div className="text-xs text-muted-foreground font-medium">총 응원자</div>
+            <div className="text-lg font-bold tabular-nums">{formatKoreanCurrency(3020000)}</div>
+            <div className="text-xs text-success font-medium">+18.5%</div>
+          </div>
+          <div className="p-3 bg-card rounded-xl border border-border shadow-sm">
+            <div className="flex items-center gap-1.5 mb-1">
+              <UsersIcon className="w-4 h-4 text-secondary" />
+              <div className="text-xs text-muted-foreground">총 응원자</div>
             </div>
-            <div className="text-2xl font-bold tabular-nums">561명</div>
-            <div className="text-xs text-success font-semibold mt-1">+12.3% 증가</div>
-          </Card>
+            <div className="text-lg font-bold tabular-nums">561명</div>
+            <div className="text-xs text-success font-medium">+12.3%</div>
+          </div>
         </div>
 
         {/* My Support Shop */}
         <div>
-          <h3 className="text-sm font-bold mb-2 px-1">내가 응원하는 가게</h3>
           <Link href="/shop/1">
-            <Card className="p-3.5 bg-gradient-to-br from-primary/10 to-primary/5 border-primary/30 hover:shadow-md transition-shadow card-glass shadow-soft">
+            <div className="bg-gradient-to-br from-primary/8 to-primary/4 rounded-2xl p-3.5 border border-primary/20 hover:border-primary/40 hover:shadow-md transition-all">
+              <h3 className="text-lg font-bold mb-3">내가 응원하는 가게</h3>
               <div className="flex items-center gap-3">
-                <div className="relative">
-                  <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center text-3xl">
-                    ☕
-                  </div>
-                  <div className="absolute -top-1 -right-1 w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs font-bold">
-                    1
-                  </div>
+                <div className="w-12 h-12 bg-gradient-to-br from-emerald-400 to-emerald-500 rounded-xl flex items-center justify-center text-2xl shadow-sm">
+                  ☕
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="font-bold break-words">카페 온더코너</span>
-                    <Badge variant="outline" className="text-xs border-success text-success">
-                      응원중
+                    <span className="font-bold text-sm">카페 온더코너</span>
+                    <Badge className="text-xs bg-success/20 text-success border-0 px-2 py-0.5">
+                      💚 응원중
                     </Badge>
                   </div>
-                  <div className="text-xs text-muted-foreground mb-1.5">카페·디저트</div>
-                  <div className="flex items-center gap-3 text-xs">
-                    <span className="font-medium">점수 87.5</span>
-                    <span className="text-muted-foreground">{formatKoreanCurrency(842000)}</span>
-                    <span className="text-muted-foreground">156명</span>
-                  </div>
+                  <div className="text-xs text-muted-foreground">카페·디저트</div>
                 </div>
-                <ChevronRight className="w-5 h-5 text-muted-foreground flex-shrink-0" />
+                <ChevronRight className="w-4 h-4 text-muted-foreground flex-shrink-0" />
               </div>
-            </Card>
+            </div>
           </Link>
         </div>
 
-        {/* Ranking List */}
-        <div>
-          <h3 className="text-sm font-bold mb-3 px-1">전체 순위</h3>
-          <div className="space-y-4">
-            {shops.map((shop) => (
-              <div key={shop.rank} className="mb-3">
-                <Link href={`/shop/${shop.rank}`}>
-                  <Card
-                    className={`p-4 hover:shadow-lg transition-all duration-200 ${
+        {/* Shop List - 큐레이션 스타일 */}
+        <div className="mt-8">
+          <div className="flex items-center justify-between mb-3 px-1">
+            <h3 className="text-lg font-bold">강남구 가게 모아보기</h3>
+          </div>
+          
+          {/* Sort Options - Compact */}
+          <div className="flex gap-2 mb-3 px-1">
+            {[
+              { id: "distance", label: "가까운 순", icon: MapPin },
+              { id: "random", label: "랜덤 발견", icon: Shuffle },
+            ].map((option) => (
+              <button
+                key={option.id}
+                onClick={() => setSortBy(option.id as any)}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                  sortBy === option.id
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "bg-card text-muted-foreground border border-border hover:border-primary/30"
+                }`}
+              >
+                <option.icon className="w-3.5 h-3.5" />
+                {option.label}
+              </button>
+            ))}
+          </div>
+
+          <div className="space-y-0">
+            {sortedShops.map((shop, index) => (
+              <div key={shop.id} className={index > 0 ? "mt-3" : ""}>
+                <Link href={`/shop/${shop.id}`}>
+                  <div
+                    className={`rounded-2xl p-4 transition-all ${
                       shop.isMySupport
-                        ? "border-primary/40 bg-primary/10 backdrop-blur-md"
-                        : "bg-card/95 backdrop-blur-md border-border/50"
-                    } shadow-md hover:scale-[1.01] active:scale-[0.99]`}
+                        ? "bg-gradient-to-br from-primary/10 to-primary/5 border-2 border-primary/30"
+                        : "bg-card border-2 border-transparent"
+                    } hover:border-primary/30 hover:shadow-lg active:scale-[0.99]`}
+                    style={{ marginBottom: "12px" }}
                   >
-                    <div className="flex items-center gap-3">
-                      {/* Rank Badge */}
-                      <div className="relative flex-shrink-0">
-                        <div
-                          className={`w-14 h-14 rounded-xl flex items-center justify-center text-2xl shadow-sm ${
-                            shop.rank === 1
-                              ? "bg-gradient-to-br from-yellow-400 to-yellow-500"
-                              : shop.rank === 2
-                                ? "bg-gradient-to-br from-gray-300 to-gray-400"
-                                : shop.rank === 3
-                                  ? "bg-gradient-to-br from-orange-400 to-orange-500"
-                                  : "bg-accent"
-                          }`}
-                        >
-                          {shop.emoji}
-                        </div>
-                        <div
-                          className={`absolute -top-1 -left-1 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shadow-sm ${
-                            shop.rank <= 3 ? "bg-foreground text-background" : "bg-muted text-muted-foreground"
-                          }`}
-                        >
-                          {shop.rank}
-                        </div>
+                    <div className="flex gap-4">
+                      {/* Shop Thumbnail */}
+                      <div className="w-[72px] h-[72px] bg-gradient-to-br from-muted/60 to-muted/40 rounded-2xl flex items-center justify-center text-4xl shadow-sm flex-shrink-0">
+                        {shop.emoji}
                       </div>
 
                       {/* Shop Info */}
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="font-bold truncate">{shop.name}</span>
+                        <div className="flex items-center gap-2 mb-2">
+                          <h4 className="font-bold text-base truncate">{shop.name}</h4>
                           {shop.isMySupport && (
                             <Heart className="w-4 h-4 fill-destructive text-destructive flex-shrink-0" />
                           )}
                         </div>
-                        <div className="text-xs text-muted-foreground mb-1.5">{shop.category}</div>
-                        <div className="flex items-center gap-3 text-xs">
-                          <span className="font-bold text-primary">점수 {shop.score}</span>
-                          <span className="text-muted-foreground">{formatKoreanCurrency(shop.payment)}</span>
-                          <span className="text-muted-foreground">{shop.supporters}명</span>
+                        
+                        <div className="flex items-center gap-2 mb-2.5">
+                          <Badge
+                            className={`text-xs font-semibold px-2.5 py-1 ${
+                              shop.theme.color === "success"
+                                ? "bg-success/15 text-success border-success/30"
+                                : shop.theme.color === "primary"
+                                  ? "bg-primary/15 text-primary border-primary/30"
+                                  : shop.theme.color === "warning"
+                                    ? "bg-warning/15 text-warning border-warning/30"
+                                    : "bg-chart-2/15 text-chart-2 border-chart-2/30"
+                            }`}
+                          >
+                            {shop.theme.emoji} {shop.theme.label}
+                          </Badge>
+                        </div>
+
+                        <p className="text-sm text-muted-foreground leading-relaxed mb-2.5">
+                          {shop.story}
+                        </p>
+                        
+                        <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-1 px-2 py-1 bg-primary/10 rounded-lg">
+                            <MapPin className="w-3.5 h-3.5 text-primary" />
+                            <span className="text-xs font-semibold text-primary">{shop.distance}m</span>
+                          </div>
+                          <div className="px-2 py-1 bg-muted/50 rounded-lg">
+                            <span className="text-xs text-muted-foreground">{shop.category}</span>
+                          </div>
                         </div>
                       </div>
-
-                      {/* Rank Change */}
-                      <div className="flex flex-col items-center gap-1 flex-shrink-0">
-                        {shop.change > 0 ? (
-                          <>
-                            <TrendingUp className="w-5 h-5 text-success" />
-                            <span className="text-xs font-bold text-success">+{shop.change}</span>
-                          </>
-                        ) : shop.change < 0 ? (
-                          <>
-                            <TrendingDown className="w-5 h-5 text-destructive" />
-                            <span className="text-xs font-bold text-destructive">{shop.change}</span>
-                          </>
-                        ) : (
-                          <>
-                            <Minus className="w-5 h-5 text-muted-foreground" />
-                            <span className="text-xs font-bold text-muted-foreground">-</span>
-                          </>
-                        )}
-                      </div>
                     </div>
-                  </Card>
+                  </div>
                 </Link>
               </div>
             ))}
@@ -368,7 +381,7 @@ export default function LeagueRankingPage() {
             <span className="font-medium">5분 전</span>
           </div>
           <p className="text-xs text-muted-foreground mt-2 leading-relaxed">
-            순위는 10분마다 자동으로 업데이트됩니다. 실제 결제 반영까지 최대 30분이 소요될 수 있습니다.
+            가게 정보는 10분마다 자동으로 업데이트됩니다. 모든 가게가 여러분의 응원을 기다리고 있어요!
           </p>
         </Card>
       </main>

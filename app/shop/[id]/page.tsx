@@ -71,11 +71,11 @@ export default function ShopDetailPage() {
 
       <main>
         {/* Hero Image */}
-        <div className="relative h-64 bg-gradient-to-br from-primary/20 to-primary/5">
+        <div className="relative h-64 bg-gradient-to-br from-emerald-400/20 to-emerald-500/10">
           <div className="absolute inset-0 flex items-center justify-center text-8xl">☕</div>
           <div className="absolute top-4 left-4">
-            <Badge className="bg-gradient-to-r from-yellow-400 to-yellow-500 text-yellow-900 border-0 font-bold">
-              1위
+            <Badge className="bg-success/10 text-success border-success/30 font-bold backdrop-blur-sm">
+              💚 지속가능
             </Badge>
           </div>
         </div>
@@ -193,53 +193,71 @@ export default function ShopDetailPage() {
 
           {currentTab === "learn" && (
             <>
-              {/* AI 성장 점수 위젯 */}
-              <Card className={`p-5 ${getScoreBgColor(growthScore.totalScore)} border-2`}>
-                <div className="flex items-center gap-2 mb-3">
-                  <Sparkles className={`w-5 h-5 ${getScoreColor(growthScore.totalScore)}`} />
-                  <h3 className="font-bold">AI 로컬 성장 점수</h3>
-                  <Badge className={`ml-auto ${getScoreBgColor(growthScore.totalScore)} ${getScoreColor(growthScore.totalScore)} border-0`}>
-                    {growthScore.grade}등급
-                  </Badge>
+              {/* AI 성장 분석 위젯 */}
+              <Card className="p-5 bg-gradient-to-br from-success/10 to-success/5 border-success/20">
+                <div className="flex items-center gap-2 mb-4">
+                  <Sparkles className="w-5 h-5 text-success" />
+                  <h3 className="font-bold">AI 성장 분석</h3>
                 </div>
-                <div className="flex items-center gap-4 mb-4">
-                  <div className={`text-5xl font-bold ${getScoreColor(growthScore.totalScore)}`}>
-                    {growthScore.totalScore}
+
+                <div className="space-y-4">
+                  {/* 서술형 지표 */}
+                  <div className="p-3 bg-card/50 rounded-xl">
+                    <div className="flex items-start gap-2 mb-2">
+                      <div className="text-lg">📈</div>
+                      <div className="flex-1">
+                        <div className="text-sm font-bold mb-1">매출 성장세</div>
+                        <div className="text-xs text-muted-foreground leading-relaxed">
+                          지난 3개월간 꾸준한 성장세를 보이고 있으며, 매출 변동성이 낮아 안정적입니다.
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex-1">
-                    <div className="text-sm text-muted-foreground mb-1">종합 점수</div>
-                    <div className="flex items-center gap-2">
-                      <TrendingUp className="w-4 h-4 text-success" />
-                      <span className="text-sm font-bold text-success">
-                        {growthScore.trend === "rising" ? "상승세" : growthScore.trend === "stable" ? "안정" : "하락"}
-                      </span>
+
+                  <div className="p-3 bg-card/50 rounded-xl">
+                    <div className="flex items-start gap-2 mb-2">
+                      <div className="text-lg">💬</div>
+                      <div className="flex-1">
+                        <div className="text-sm font-bold mb-1">고객 만족도</div>
+                        <div className="text-xs text-muted-foreground leading-relaxed">
+                          재방문 고객 비율이 높으며, 리뷰 긍정도가 {sentiment.positive}%로 매우 우수합니다.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-3 bg-card/50 rounded-xl">
+                    <div className="flex items-start gap-2 mb-2">
+                      <div className="text-lg">🌱</div>
+                      <div className="flex-1">
+                        <div className="text-sm font-bold mb-1">지역 기여도</div>
+                        <div className="text-xs text-muted-foreground leading-relaxed">
+                          로컬 원두 사용, 지역 고용 창출 등 ESG 실천으로 지역사회에 긍정적 영향을 주고 있습니다.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-3 bg-card/50 rounded-xl">
+                    <div className="flex items-start gap-2 mb-2">
+                      <div className="text-lg">📱</div>
+                      <div className="flex-1">
+                        <div className="text-sm font-bold mb-1">온라인 입소문</div>
+                        <div className="text-xs text-muted-foreground leading-relaxed">
+                          SNS에서 자주 언급되며, 방문 후기가 활발하게 공유되고 있습니다.
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
-                <div className="space-y-2">
-                  {[
-                    { label: "매출 안정성", value: growthScore.breakdown.salesStability, max: 20 },
-                    { label: "고객 재방문", value: growthScore.breakdown.customerRetention, max: 20 },
-                    { label: "리뷰 감성", value: growthScore.breakdown.reviewSentiment, max: 20 },
-                    { label: "SNS 언급", value: growthScore.breakdown.socialMentions, max: 15 },
-                    { label: "응원 포인트", value: growthScore.breakdown.supportPoints, max: 15 },
-                    { label: "ESG 지표", value: growthScore.breakdown.esgScore, max: 10 },
-                  ].map((item) => (
-                    <div key={item.label}>
-                      <div className="flex items-center justify-between text-xs mb-1">
-                        <span className="text-muted-foreground">{item.label}</span>
-                        <span className="font-bold">
-                          {item.value}/{item.max}
-                        </span>
-                      </div>
-                      <div className="w-full bg-muted/30 rounded-full h-1.5 overflow-hidden">
-                        <div
-                          className={`h-full ${getScoreColor(growthScore.totalScore)} bg-current rounded-full transition-all`}
-                          style={{ width: `${(item.value / item.max) * 100}%` }}
-                        />
-                      </div>
-                    </div>
-                  ))}
+
+                <div className="mt-4 p-3 bg-success/10 rounded-xl">
+                  <div className="flex items-center gap-2">
+                    <TrendingUp className="w-4 h-4 text-success" />
+                    <span className="text-xs font-bold text-success">
+                      종합 평가: 지속 가능한 성장이 기대되는 가게입니다
+                    </span>
+                  </div>
                 </div>
               </Card>
 
