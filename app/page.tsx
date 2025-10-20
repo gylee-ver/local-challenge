@@ -84,12 +84,12 @@ export default function HomePage() {
         </div>
 
         <Card className="p-6 card-glass bg-gradient-to-br from-primary/10 via-primary/5 to-transparent shadow-soft-lg">
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex-1">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex-1 min-w-0">
               <Badge className="mb-3 bg-primary/20 text-primary border-0 font-semibold px-3 py-1.5 rounded-full">
                 이달의 챌린지
               </Badge>
-              <h2 className="text-2xl font-bold mb-2 text-balance leading-tight">
+              <h2 className="text-2xl font-bold mb-2 leading-tight break-keep">
                 우리 동네 가게를
                 <br />
                 응원하고 리워드 받기
@@ -106,7 +106,7 @@ export default function HomePage() {
                 <ChevronRight className="w-4 h-4 text-muted-foreground" />
               </button>
             </div>
-            <img src="/winnercup-nh.png" alt="우승컵" className="w-24 h-24 object-contain" />
+            <img src="/winnercup-nh.png" alt="우승컵" className="w-16 h-16 sm:w-20 sm:h-20 object-contain flex-shrink-0" />
           </div>
         </Card>
 
