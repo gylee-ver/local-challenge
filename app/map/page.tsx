@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { MapPin, Search, Store, Heart, Award, ChevronRight, X, Locate, Home } from "lucide-react"
 import Link from "next/link"
+import { getAllShops } from "@/lib/shops-data"
 
 const formatKoreanCurrency = (amount: number): string => {
   if (amount >= 10000) {
@@ -28,80 +29,21 @@ const formatKoreanCurrency = (amount: number): string => {
   return `${amount}원`
 }
 
-const shops = [
-  {
-    id: 1,
-    rank: 1,
-    name: "카페 온더코너",
-    category: "카페·디저트",
-    address: "서울 강남구 논현로 123",
-    distance: "250m",
-    supporters: 156,
-    amount: 842000,
-    image: "☕",
-    lat: 37.5012,
-    lng: 127.0396,
-  },
-  {
-    id: 2,
-    rank: 2,
-    name: "라멘야쿠모",
-    category: "일식·라멘",
-    address: "서울 강남구 역삼동 456",
-    distance: "380m",
-    supporters: 142,
-    amount: 756000,
-    image: "🍜",
-    lat: 37.5002,
-    lng: 127.0386,
-  },
-  {
-    id: 3,
-    rank: 3,
-    name: "한신포차 강남점",
-    category: "한식·포차",
-    address: "서울 강남구 테헤란로 789",
-    distance: "520m",
-    supporters: 98,
-    amount: 523000,
-    image: "🍻",
-    lat: 37.4992,
-    lng: 127.0406,
-  },
-  {
-    id: 4,
-    rank: 4,
-    name: "더그린테이블",
-    category: "샐러드·브런치",
-    address: "서울 강남구 청담동 321",
-    distance: "680m",
-    supporters: 87,
-    amount: 478000,
-    image: "🥗",
-    lat: 37.5022,
-    lng: 127.0376,
-  },
-  {
-    id: 5,
-    rank: 5,
-    name: "미스터피자 삼성점",
-    category: "양식·피자",
-    address: "서울 강남구 삼성동 654",
-    distance: "750m",
-    supporters: 76,
-    amount: 412000,
-    image: "🍕",
-    lat: 37.4982,
-    lng: 127.0416,
-  },
-]
+const allShops = getAllShops()
 
-const categories = ["전체", "카페·디저트", "일식·라멘", "한식·포차", "샐러드·브런치", "양식·피자"]
+const categories = ["전체", ...Array.from(new Set(allShops.map((shop) => shop.category)))]
 
 export default function MapPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("전체")
   const [selectedShop, setSelectedShop] = useState<number | null>(null)
+
+  const shops = allShops.map((shop, index) => ({
+    ...shop,
+    rank: index + 1,
+    image: shop.emoji,
+    distance: `${shop.distance}m`,
+  }))
 
   const filteredShops = shops.filter((shop) => {
     const matchesSearch = shop.name.toLowerCase().includes(searchQuery.toLowerCase())

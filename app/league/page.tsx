@@ -18,6 +18,7 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import { useLeague } from "@/lib/league-context"
+import { getAllShops } from "@/lib/shops-data"
 
 const formatKoreanCurrency = (amount: number): string => {
   if (amount >= 10000) {
@@ -44,138 +45,19 @@ export default function LeagueRankingPage() {
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [sortBy, setSortBy] = useState<"distance" | "random">("distance")
 
-  const shops = [
-    {
-      id: 1,
-      name: "카페 온더코너",
-      category: "카페·디저트",
-      payment: 842000,
-      supporters: 156,
-      emoji: "☕",
-      isMySupport: true,
-      theme: { label: "지속가능", emoji: "💚", color: "success" },
-      story: "논현동에서 10년째 로컬 원두로 따뜻한 커피를 전합니다",
-      distance: 250,
-      status: "popular", // popular | growing | needSupport
-    },
-    {
-      id: 2,
-      name: "라멘야쿠모",
-      category: "일식·라멘",
-      payment: 756000,
-      supporters: 142,
-      emoji: "🍜",
-      isMySupport: false,
-      theme: { label: "스태프 픽", emoji: "🌟", color: "primary" },
-      story: "정통 일본식 라멘과 지역 농산물이 만나는 곳",
-      distance: 380,
-      status: "popular",
-    },
-    {
-      id: 3,
-      name: "한신포차 강남점",
-      category: "한식·포차",
-      payment: 523000,
-      supporters: 98,
-      emoji: "🍻",
-      isMySupport: false,
-      theme: { label: "응원 급증", emoji: "🔥", color: "warning" },
-      story: "퇴근 후 동네 사람들이 모이는 따뜻한 공간",
-      distance: 520,
-      status: "growing",
-    },
-    {
-      id: 4,
-      name: "더그린테이블",
-      category: "샐러드·브런치",
-      payment: 487000,
-      supporters: 89,
-      emoji: "🥗",
-      isMySupport: false,
-      theme: { label: "건강한 식탁", emoji: "🥗", color: "success" },
-      story: "유기농 채소로 만드는 건강한 한 끼",
-      distance: 680,
-      status: "popular",
-    },
-    {
-      id: 5,
-      name: "미스터피자 삼성점",
-      category: "양식·피자",
-      payment: 412000,
-      supporters: 76,
-      emoji: "🍕",
-      isMySupport: false,
-      theme: { label: "가족 친화", emoji: "👨‍👩‍👧", color: "primary" },
-      story: "가족 단위 고객들의 단골 피자집",
-      distance: 750,
-      status: "popular",
-    },
-    {
-      id: 6,
-      name: "봉추찜닭 강남점",
-      category: "한식·찜닭",
-      payment: 398000,
-      supporters: 71,
-      emoji: "🍗",
-      isMySupport: false,
-      theme: { label: "응원 필요", emoji: "💪", color: "chart-2" },
-      story: "푸짐한 한 끼로 지역 주민을 행복하게",
-      distance: 820,
-      status: "needSupport",
-    },
-    {
-      id: 7,
-      name: "카페드림",
-      category: "카페·디저트",
-      payment: 356000,
-      supporters: 64,
-      emoji: "☕",
-      isMySupport: false,
-      theme: { label: "신규 오픈", emoji: "✨", color: "primary" },
-      story: "신사동에 새로 오픈한 감성 카페",
-      distance: 950,
-      status: "growing",
-    },
-    {
-      id: 8,
-      name: "본죽 역삼점",
-      category: "한식·죽",
-      payment: 312000,
-      supporters: 58,
-      emoji: "🥣",
-      isMySupport: false,
-      theme: { label: "건강 밥상", emoji: "🌾", color: "success" },
-      story: "바쁜 직장인들의 건강한 한 끼",
-      distance: 450,
-      status: "needSupport",
-    },
-    {
-      id: 9,
-      name: "피자스쿨 대치점",
-      category: "양식·피자",
-      payment: 287000,
-      supporters: 52,
-      emoji: "🍕",
-      isMySupport: false,
-      theme: { label: "응원 필요", emoji: "💪", color: "chart-2" },
-      story: "학생들과 함께 성장하는 동네 피자집",
-      distance: 1100,
-      status: "needSupport",
-    },
-    {
-      id: 10,
-      name: "맘스터치 강남역점",
-      category: "패스트푸드·버거",
-      payment: 245000,
-      supporters: 47,
-      emoji: "🍔",
-      isMySupport: false,
-      theme: { label: "첫 응원", emoji: "❤️", color: "destructive" },
-      story: "따뜻한 첫 응원이 필요합니다",
-      distance: 600,
-      status: "needSupport",
-    },
-  ]
+  const shops = getAllShops().map((shop, index) => ({
+    id: shop.id,
+    name: shop.name,
+    category: shop.category,
+    payment: shop.amount,
+    supporters: shop.supporters,
+    emoji: shop.emoji,
+    isMySupport: index === 0, // 첫 번째 가게만 응원 중으로 설정
+    theme: shop.theme,
+    story: shop.story,
+    distance: shop.distance,
+    status: shop.status,
+  }))
 
   const handleRefresh = () => {
     setIsRefreshing(true)
@@ -245,7 +127,9 @@ export default function LeagueRankingPage() {
               <DollarSign className="w-4 h-4 text-primary" />
               <div className="text-xs text-muted-foreground">총 결제액</div>
             </div>
-            <div className="text-lg font-bold tabular-nums">{formatKoreanCurrency(3020000)}</div>
+            <div className="text-lg font-bold tabular-nums">
+              {formatKoreanCurrency(shops.reduce((acc, shop) => acc + shop.payment, 0))}
+            </div>
             <div className="text-xs text-success font-medium">+18.5%</div>
           </div>
           <div className="p-3 bg-card rounded-xl border border-border shadow-sm">
@@ -253,7 +137,9 @@ export default function LeagueRankingPage() {
               <UsersIcon className="w-4 h-4 text-secondary" />
               <div className="text-xs text-muted-foreground">총 응원자</div>
             </div>
-            <div className="text-lg font-bold tabular-nums">561명</div>
+            <div className="text-lg font-bold tabular-nums">
+              {shops.reduce((acc, shop) => acc + shop.supporters, 0)}명
+            </div>
             <div className="text-xs text-success font-medium">+12.3%</div>
           </div>
         </div>

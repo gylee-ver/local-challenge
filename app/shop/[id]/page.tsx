@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { ArrowLeft, Heart, Share2, MapPin, Clock, Phone, MessageCircle, TrendingUp, Sparkles } from "lucide-react"
 import Link from "next/link"
+import { useParams, notFound } from "next/navigation"
 import { DepositDialog } from "@/components/deposit-dialog"
 import {
   calculateLocalGrowthScore,
@@ -13,23 +14,32 @@ import {
   getScoreColor,
   getScoreBgColor,
 } from "@/lib/ai-scoring"
+import { getShopById } from "@/lib/shops-data"
 
 export default function ShopDetailPage() {
+  const params = useParams()
+  const shopId = parseInt(params.id as string)
+  const shop = getShopById(shopId)
+
   const [currentTab, setCurrentTab] = useState<"look" | "learn" | "love">("look")
   const [isSupporting, setIsSupporting] = useState(false)
   const [isFavorited, setIsFavorited] = useState(false)
   const [depositDialogOpen, setDepositDialogOpen] = useState(false)
 
+  if (!shop) {
+    notFound()
+  }
+
   // AI 분석 데이터
-  const growthScore = calculateLocalGrowthScore("shop-1")
-  const sentiment = analyzeSentiment("shop-1")
+  const growthScore = calculateLocalGrowthScore(`shop-${shop.id}`)
+  const sentiment = analyzeSentiment(`shop-${shop.id}`)
 
   const handleShare = async () => {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: "카페 로컬빈즈",
-          text: "로컬챌린지에서 카페 로컬빈즈를 응원해주세요!",
+          title: shop.name,
+          text: `로컬챌린지에서 ${shop.name}를 응원해주세요!`,
           url: window.location.href,
         })
       } catch (err) {
@@ -71,11 +81,21 @@ export default function ShopDetailPage() {
 
       <main>
         {/* Hero Image */}
-        <div className="relative h-64 bg-gradient-to-br from-emerald-400/20 to-emerald-500/10">
-          <div className="absolute inset-0 flex items-center justify-center text-8xl">☕</div>
+        <div className="relative h-64 bg-gradient-to-br from-primary/20 to-primary/10">
+          <div className="absolute inset-0 flex items-center justify-center text-8xl">{shop.emoji}</div>
           <div className="absolute top-4 left-4">
-            <Badge className="bg-success/10 text-success border-success/30 font-bold backdrop-blur-sm">
-              💚 지속가능
+            <Badge
+              className={`${
+                shop.theme.color === "success"
+                  ? "bg-success/10 text-success border-success/30"
+                  : shop.theme.color === "primary"
+                    ? "bg-primary/10 text-primary border-primary/30"
+                    : shop.theme.color === "warning"
+                      ? "bg-warning/10 text-warning border-warning/30"
+                      : "bg-chart-2/10 text-chart-2 border-chart-2/30"
+              } font-bold backdrop-blur-sm`}
+            >
+              {shop.theme.emoji} {shop.theme.label}
             </Badge>
           </div>
         </div>
@@ -84,14 +104,14 @@ export default function ShopDetailPage() {
         <div className="px-4 py-5 bg-card">
           <div className="flex items-start justify-between mb-3">
             <div className="flex-1">
-              <h1 className="text-2xl font-bold mb-2">카페 온더코너</h1>
-              <p className="text-sm text-muted-foreground mb-3">논현동에서 오랜 시간 사랑받은 동네 카페</p>
+              <h1 className="text-2xl font-bold mb-2">{shop.name}</h1>
+              <p className="text-sm text-muted-foreground mb-3">{shop.description}</p>
               <div className="flex flex-wrap gap-2">
                 <Badge variant="outline" className="text-xs">
-                  카페·디저트
+                  {shop.category}
                 </Badge>
                 <Badge variant="outline" className="text-xs">
-                  강남구 논현동
+                  {shop.address.split(" ")[2]}
                 </Badge>
                 <Badge variant="outline" className="text-xs border-success text-success">
                   NH pay 가능
@@ -103,15 +123,17 @@ export default function ShopDetailPage() {
           {/* Quick Info */}
           <div className="grid grid-cols-3 gap-3 mt-4">
             <div className="text-center">
-              <div className="text-xl font-bold text-primary mb-1">₩842K</div>
+              <div className="text-xl font-bold text-primary mb-1">
+                ₩{Math.floor(shop.amount / 1000)}K
+              </div>
               <div className="text-xs text-muted-foreground">결제액</div>
             </div>
             <div className="text-center">
-              <div className="text-xl font-bold text-chart-2 mb-1">156명</div>
+              <div className="text-xl font-bold text-chart-2 mb-1">{shop.supporters}명</div>
               <div className="text-xs text-muted-foreground">응원자</div>
             </div>
             <div className="text-center">
-              <div className="text-xl font-bold text-success mb-1">+12.3%</div>
+              <div className="text-xl font-bold text-success mb-1">+{(Math.random() * 20 + 5).toFixed(1)}%</div>
               <div className="text-xs text-muted-foreground">증가율</div>
             </div>
           </div>
@@ -148,12 +170,7 @@ export default function ShopDetailPage() {
               <Card className="p-5">
                 <h3 className="font-bold mb-3">대표 메뉴</h3>
                 <div className="grid grid-cols-2 gap-3">
-                  {[
-                    { name: "시그니처 라떼", price: "5,500원", emoji: "☕" },
-                    { name: "수제 티라미수", price: "6,500원", emoji: "🍰" },
-                    { name: "콜드브루", price: "5,000원", emoji: "🧊" },
-                    { name: "크로플", price: "6,000원", emoji: "🧇" },
-                  ].map((menu, i) => (
+                  {shop.menu.map((menu, i) => (
                     <div key={i} className="p-4 bg-accent/50 rounded-xl text-center">
                       <div className="text-4xl mb-2">{menu.emoji}</div>
                       <div className="font-bold text-sm mb-1">{menu.name}</div>
@@ -169,21 +186,23 @@ export default function ShopDetailPage() {
                   <div className="flex items-start gap-3">
                     <MapPin className="w-5 h-5 text-muted-foreground flex-shrink-0 mt-0.5" />
                     <div className="flex-1">
-                      <div className="text-sm">서울 강남구 논현로 123</div>
-                      <div className="text-xs text-muted-foreground mt-1">논현역 2번 출구 도보 3분</div>
+                      <div className="text-sm">{shop.address}</div>
+                      <div className="text-xs text-muted-foreground mt-1">{shop.distance}m 거리</div>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
                     <Clock className="w-5 h-5 text-muted-foreground flex-shrink-0 mt-0.5" />
                     <div className="flex-1">
-                      <div className="text-sm">평일 08:00 - 22:00</div>
-                      <div className="text-xs text-muted-foreground mt-1">주말 10:00 - 20:00 (월요일 휴무)</div>
+                      <div className="text-sm">{shop.hours.weekday}</div>
+                      <div className="text-xs text-muted-foreground mt-1">
+                        {shop.hours.weekend} ({shop.hours.closed})
+                      </div>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
                     <Phone className="w-5 h-5 text-muted-foreground flex-shrink-0 mt-0.5" />
                     <div className="flex-1">
-                      <div className="text-sm">02-1234-5678</div>
+                      <div className="text-sm">{shop.phone}</div>
                     </div>
                   </div>
                 </div>
@@ -263,56 +282,37 @@ export default function ShopDetailPage() {
 
               <Card className="p-5">
                 <h3 className="font-bold mb-3">창업 스토리</h3>
-                <p className="text-sm leading-relaxed text-muted-foreground">
-                  "논현동에서 10년째 카페를 운영하고 있습니다. 처음엔 작은 테이크아웃 전문점으로 시작했지만, 
-                  단골손님들의 사랑 덕분에 지금의 공간으로 확장할 수 있었어요. 매일 신선한 원두와 수제 베이커리로 
-                  이웃분들을 맞이하는 게 가장 큰 보람입니다."
-                </p>
+                <p className="text-sm leading-relaxed text-muted-foreground">"{shop.story}"</p>
                 <div className="mt-4 p-3 bg-primary/5 rounded-lg">
                   <div className="text-xs text-primary font-medium mb-1">사장님 한마디</div>
-                  <div className="text-sm">"논현동 주민들의 일상이 되는 카페가 되고 싶습니다 ☕"</div>
+                  <div className="text-sm">"{shop.ownerQuote}"</div>
                 </div>
               </Card>
 
               <Card className="p-5">
                 <h3 className="font-bold mb-3">로컬 연결성</h3>
                 <div className="space-y-3">
-                  <div className="flex items-start gap-3 p-3 bg-accent/50 rounded-lg">
-                    <div className="text-2xl">🌾</div>
-                    <div className="flex-1">
-                      <div className="font-bold text-sm mb-1">지역 농산물 사용</div>
-                      <div className="text-xs text-muted-foreground">
-                        경기도 양평 농협에서 공급받는 유기농 우유를 사용합니다
+                  {shop.localConnection.map((connection, i) => (
+                    <div key={i} className="flex items-start gap-3 p-3 bg-accent/50 rounded-lg">
+                      <div className="text-2xl">{connection.emoji}</div>
+                      <div className="flex-1">
+                        <div className="font-bold text-sm mb-1">{connection.title}</div>
+                        <div className="text-xs text-muted-foreground">{connection.description}</div>
                       </div>
                     </div>
-                  </div>
-                  <div className="flex items-start gap-3 p-3 bg-accent/50 rounded-lg">
-                    <div className="text-2xl">🤝</div>
-                    <div className="flex-1">
-                      <div className="font-bold text-sm mb-1">동네 협업</div>
-                      <div className="text-xs text-muted-foreground">
-                        옆 동네 베이커리와 협업하여 신선한 빵을 매일 공급받습니다
-                      </div>
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </Card>
 
               <Card className="p-5">
                 <h3 className="font-bold mb-3">인터뷰 Q&A</h3>
                 <div className="space-y-4">
-                  <div>
-                    <div className="text-sm font-bold mb-2 text-primary">Q. 가장 인기 있는 메뉴는?</div>
-                    <div className="text-sm text-muted-foreground pl-4">
-                      시그니처 라떼와 수제 티라미수가 단연 1위예요. 직접 만든 마스카포네 크림이 비결입니다.
+                  {shop.interview.map((qa, i) => (
+                    <div key={i}>
+                      <div className="text-sm font-bold mb-2 text-primary">Q. {qa.question}</div>
+                      <div className="text-sm text-muted-foreground pl-4">{qa.answer}</div>
                     </div>
-                  </div>
-                  <div>
-                    <div className="text-sm font-bold mb-2 text-primary">Q. 추천하고 싶은 시간대는?</div>
-                    <div className="text-sm text-muted-foreground pl-4">
-                      오후 3-5시가 가장 여유로워요. 창가 자리에서 책 읽기 좋은 시간입니다.
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </Card>
             </>
@@ -491,8 +491,8 @@ export default function ShopDetailPage() {
       <DepositDialog
         open={depositDialogOpen}
         onOpenChange={setDepositDialogOpen}
-        shopName="카페 로컬빈즈"
-        shopEmoji="☕"
+        shopName={shop.name}
+        shopEmoji={shop.emoji}
         onSuccess={handleSupportSuccess}
       />
     </div>

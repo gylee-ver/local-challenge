@@ -12,6 +12,7 @@ import { SearchDialog } from "@/components/search-dialog"
 import { NotificationDialog } from "@/components/notification-dialog"
 import { RegionSelectorDialog } from "@/components/region-selector-dialog"
 import { useLeague } from "@/lib/league-context"
+import { getAllShops } from "@/lib/shops-data"
 
 const formatKoreanCurrency = (amount: number): string => {
   if (amount >= 10000) {
@@ -36,6 +37,7 @@ const formatKoreanCurrency = (amount: number): string => {
 export default function HomePage() {
   const router = useRouter()
   const { currentLeague } = useLeague()
+  const allShops = getAllShops()
   const [notificationCount, setNotificationCount] = useState(1)
   const [depositDialogOpen, setDepositDialogOpen] = useState(false)
   const [searchDialogOpen, setSearchDialogOpen] = useState(false)
@@ -51,6 +53,9 @@ export default function HomePage() {
   const handleDepositSuccess = () => {
     setNotificationCount((prev) => prev + 1)
   }
+
+  const totalParticipants = allShops.reduce((acc, shop) => acc + shop.supporters, 0)
+  const totalAmount = allShops.reduce((acc, shop) => acc + shop.amount, 0)
 
   return (
     <div className="min-h-screen bg-background pb-28">
@@ -170,7 +175,7 @@ export default function HomePage() {
                 <Users className="w-4 h-4 text-primary" />
                 <div className="text-xs text-muted-foreground font-medium">참여자</div>
               </div>
-              <div className="text-2xl font-bold tabular-nums mb-0.5">1,247명</div>
+              <div className="text-2xl font-bold tabular-nums mb-0.5">{totalParticipants}명</div>
               <div className="text-xs text-success font-medium">+8.3%</div>
             </Card>
             <Card className="p-3.5 card-glass shadow-soft flex-shrink-0 w-[150px] snap-start">
@@ -178,7 +183,7 @@ export default function HomePage() {
                 <DollarSign className="w-4 h-4 text-secondary" />
                 <div className="text-xs text-muted-foreground font-medium">총 응원금</div>
               </div>
-              <div className="text-2xl font-bold tabular-nums mb-0.5">{formatKoreanCurrency(2400000)}</div>
+              <div className="text-2xl font-bold tabular-nums mb-0.5">{formatKoreanCurrency(totalAmount)}</div>
               <div className="text-xs text-success font-medium">+18.5%</div>
             </Card>
             <Card className="p-3.5 card-glass shadow-soft flex-shrink-0 w-[150px] snap-start">
@@ -186,7 +191,7 @@ export default function HomePage() {
                 <Award className="w-4 h-4 text-chart-3" />
                 <div className="text-xs text-muted-foreground font-medium">참여 가게</div>
               </div>
-              <div className="text-2xl font-bold tabular-nums mb-0.5">10개</div>
+              <div className="text-2xl font-bold tabular-nums mb-0.5">{allShops.length}개</div>
               <div className="text-xs text-success font-medium">+2개</div>
             </Card>
           </div>
@@ -204,66 +209,46 @@ export default function HomePage() {
 
           <div className="relative">
             <div className="flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide">
-              {[
-                {
-                  id: 1,
-                  name: "카페 온더코너",
-                  category: "카페·디저트",
-                  supporters: 156,
-                  amount: 842000,
-                  theme: { label: "지속가능", emoji: "💚", color: "success" },
-                  image: "☕",
-                  bgColor: "from-emerald-400 to-emerald-500",
-                },
-                {
-                  id: 2,
-                  name: "라멘야쿠모",
-                  category: "일식·라멘",
-                  supporters: 142,
-                  amount: 756000,
-                  theme: { label: "스태프 픽", emoji: "🌟", color: "primary" },
-                  image: "🍜",
-                  bgColor: "from-blue-400 to-blue-500",
-                },
-                {
-                  id: 3,
-                  name: "한신포차 강남점",
-                  category: "한식·포차",
-                  supporters: 98,
-                  amount: 523000,
-                  theme: { label: "응원 급증", emoji: "🔥", color: "warning" },
-                  image: "🍻",
-                  bgColor: "from-orange-400 to-orange-500",
-                },
-              ].map((shop) => (
-                <Link key={shop.id} href={`/shop/${shop.id}`} className="flex-shrink-0 snap-start">
-                  <Card className="w-[170px] card-glass hover:shadow-soft-lg transition-all active:scale-[0.98] overflow-hidden p-0">
-                    <div className={`h-[140px] flex items-center justify-center text-6xl bg-gradient-to-br ${shop.bgColor}`}>
-                      {shop.image}
-                    </div>
-                    <div className="p-3.5">
-                      <div className="flex items-center gap-1.5 mb-2">
-                        <Badge
-                          className={`text-xs font-semibold px-2 py-0.5 border-0 ${
-                            shop.theme.color === "success"
-                              ? "bg-success/10 text-success"
-                              : shop.theme.color === "primary"
-                                ? "bg-primary/10 text-primary"
-                                : "bg-warning/10 text-warning"
-                          }`}
-                        >
-                          {shop.theme.emoji} {shop.theme.label}
-                        </Badge>
+              {allShops.slice(0, 3).map((shop) => {
+                const bgColors = [
+                  "from-emerald-400 to-emerald-500",
+                  "from-blue-400 to-blue-500",
+                  "from-orange-400 to-orange-500",
+                ]
+                return (
+                  <Link key={shop.id} href={`/shop/${shop.id}`} className="flex-shrink-0 snap-start">
+                    <Card className="w-[170px] card-glass hover:shadow-soft-lg transition-all active:scale-[0.98] overflow-hidden p-0">
+                      <div
+                        className={`h-[140px] flex items-center justify-center text-6xl bg-gradient-to-br ${bgColors[shop.id - 1] || "from-primary/20 to-primary/10"}`}
+                      >
+                        {shop.emoji}
                       </div>
-                      <div className="text-sm font-bold mb-1 break-words leading-tight">{shop.name}</div>
-                      <div className="text-xs text-muted-foreground mb-2">{shop.category}</div>
-                      <div className="text-xs">
-                        <span className="font-bold text-primary tabular-nums">{formatKoreanCurrency(shop.amount)}</span>
+                      <div className="p-3.5">
+                        <div className="flex items-center gap-1.5 mb-2">
+                          <Badge
+                            className={`text-xs font-semibold px-2 py-0.5 border-0 ${
+                              shop.theme.color === "success"
+                                ? "bg-success/10 text-success"
+                                : shop.theme.color === "primary"
+                                  ? "bg-primary/10 text-primary"
+                                  : "bg-warning/10 text-warning"
+                            }`}
+                          >
+                            {shop.theme.emoji} {shop.theme.label}
+                          </Badge>
+                        </div>
+                        <div className="text-sm font-bold mb-1 break-words leading-tight">{shop.name}</div>
+                        <div className="text-xs text-muted-foreground mb-2">{shop.category}</div>
+                        <div className="text-xs">
+                          <span className="font-bold text-primary tabular-nums">
+                            {formatKoreanCurrency(shop.amount)}
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                  </Card>
-                </Link>
-              ))}
+                    </Card>
+                  </Link>
+                )
+              })}
             </div>
             <div className="absolute right-0 top-0 bottom-2 w-16 bg-gradient-to-l from-background via-background/80 to-transparent pointer-events-none" />
           </div>
